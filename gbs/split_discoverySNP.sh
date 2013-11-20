@@ -13,6 +13,7 @@ chromosome_count=$((1+$chromosome_end-$chromosome_start))
 #calculate batch size by rounding up count/threads
 batch_size=$((($chromosome_count+($threads-1))/$threads))
 let i=0
+echo "Running commands:"
 while [ $i -lt $threads ]
 do
     start_batch=$(($chromosome_start+$i*$batch_size))
@@ -22,7 +23,7 @@ do
 	end_batch=$chromosome_end
     fi
     session="snpdiscover_$start_batch_$end_batch"
-    echo "working"
+    echo "screen -d -m -S  $session  run_pipeline.pl -fork1 -DiscoverySNPCallerPlugin -i  $INFILE  -m  topm/cassava.topm.bin  -y -o  $OUTFILE -vcf -mnMAF $MNMAF -mnLCov $MNLCOV -ref $REF -sC $start_batch -eC $end_batch -inclRare -endPlugin -runfork1"
     screen -d -m -S "$session" run_pipeline.pl -fork1 -DiscoverySNPCallerPlugin -i "$INFILE" -m "topm/cassava.topm.bin" -y -o "$OUTFILE" -vcf -mnMAF "$MNMAF" -mnLCov "$MNLCOV" -ref "$REF" -sC "$start_batch" -eC "$end_batch" -inclRare -endPlugin -runfork1
     i=$(($i+1))
 done
